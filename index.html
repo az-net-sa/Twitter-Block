@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Web Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            text-align: center;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .response-container {
+            visibility: hidden;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: #e6e6e6;
+        }
+        
+        .response-container.success {
+            border-color: #4CAF50;
+            background-color: #e0f7e0;
+            visibility: visible;
+        }
+        
+        .response-container.error {
+            border-color: #f44336;
+            background-color: #f7e0e0;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Web Page</h1>
+    <div class="container">
+        <div class="input-group">
+            <label for="input1">x-csrf-token:</label>
+            <input type="text" id="input1" placeholder="Enter x-csrf-token">
+        </div>
+        <div class="input-group">
+            <label for="input2">Authorization:</label>
+            <input type="text" id="input2" placeholder="Enter Authorization">
+        </div>
+        <div class="input-group">
+            <label for="input3">Cookie:</label>
+            <input type="text" id="input3" placeholder="Enter Cookie">
+        </div>
+        <button class="btn" id="saveButton">Save</button>
+        <div id="responseContainer" class="response-container"></div>
+    </div>
+
+    <script>
+        document.getElementById('saveButton').addEventListener('click', function() {
+            const input1 = document.getElementById('input1').value;
+            const input2 = document.getElementById('input2').value;
+            const input3 = document.getElementById('input3').value;
+
+            const data = {
+                "Host": "x.com",
+                "x-csrf-token": input1,
+                "authorization": input2,
+                "Cookie": input3
+            };
+
+            fetch("https://api.twitter.com/i/api/1.1/blocks/create.json", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayResponse(data, true);
+            })
+            .catch((error) => {
+                displayResponse(error, false);
+            });
+        });
+
+        function displayResponse(response, success) {
+            const responseContainer = document.getElementById('responseContainer');
+            responseContainer.innerHTML = '';
+
+            if (success) {
+                responseContainer.classList.add('success');
+                responseContainer.classList.remove('error');
+                responseContainer.innerHTML = `
+                    <p><strong>Success!</strong></p>
+                    <p>Successful Blocks: ${response.successful_blocks}</p>
+                    <p>Unsuccessful Blocks: ${response.unsuccessful_blocks}</p>
+                `;
+            } else {
+                responseContainer.classList.add('error');
+                responseContainer.classList.remove('success');
+                responseContainer.innerHTML = `
+                    <p><strong>Error:</strong> ${response}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
