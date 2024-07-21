@@ -100,16 +100,22 @@
 
     <script>
         document.getElementById('saveButton').addEventListener('click', function() {
+
             const input1 = document.getElementById('input1').value;
             const input2 = document.getElementById('input2').value;
             const input3 = document.getElementById('input3').value;
 
-            const data = {
-                "Host": "x.com",
-                "x-csrf-token": input1,
-                "authorization": input2,
-                "Cookie": input3
+            const xcsrf = input1.replace("x-csrf-token: ", "");
+            const authorization = input2.replace("authorization: ", "");
+            const Cookie = input3.replace("Cookie: ", "").replace('"', '\\"');
+
+            const headers = {
+                "x-csrf-token": '"' + xcsrf + '"',
+                "authorization": '"' + authorization + '"',
+                "Cookie": '"' + Cookie + '"'
             };
+
+            const data = JSON.stringify(headers);
 
             fetch("https://api.twitter.com/i/api/1.1/blocks/create.json", {
                 method: 'POST',
